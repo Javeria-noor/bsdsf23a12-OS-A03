@@ -4,8 +4,9 @@ CFLAGS = -Wall -g -Iinclude
 LDFLAGS = 
 TARGET = bin/myshell
 SRCDIR = src
+OBJDIR = obj
 SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(SOURCES:.c=.o)
+OBJECTS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
 
 # Default target
 all: $(TARGET)
@@ -16,12 +17,13 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
 
 # Compile source files to object files
-%.o: %.c
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean build artifacts
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -rf $(OBJDIR) $(TARGET)
 
 # Install dependencies (for later features)
 deps:

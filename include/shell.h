@@ -18,6 +18,12 @@
 char* read_cmd(char* prompt, FILE* fp);
 char** tokenize(char* cmdline);
 int execute(char** arglist);
-int handle_builtin(char** arglist);  // NEW: Built-in command handler
+int handle_builtin(char** arglist);  // Built-in command handler
+
+// Built-in command prototypes
+int builtin_exit(char** arglist);
+int builtin_cd(char** arglist);
+int builtin_help(char** arglist);
+int builtin_jobs(char** arglist);
 
 #endif // SHELL_H
