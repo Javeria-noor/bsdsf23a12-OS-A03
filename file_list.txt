@@ -1,0 +1,9 @@
+total 24
+drwxrwxr-x 2 kali kali 4096 Nov 11 09:55 bin
+-rw-r--r-- 1 kali kali    0 Nov 11 08:18 c_files.txt
+-rw-r--r-- 1 kali kali    0 Nov 11 09:56 file_list.txt
+drwxrwxr-x 2 kali kali 4096 Nov 11 09:43 include
+-rw-rw-r-- 1 kali kali  892 Nov 11 09:16 Makefile
+drwxrwxr-x 2 kali kali 4096 Nov 10 12:59 obj
+-rw-rw-r-- 1 kali kali  210 Nov 10 12:18 README.md
+drwxrwxr-x 2 kali kali 4096 Nov 11 09:55 src

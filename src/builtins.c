@@ -3,7 +3,7 @@
 // Built-in command: exit
 int builtin_exit(char** arglist) {
     printf("Shell terminated.\n");
-    exit(0);  // Terminates the shell process
+    exit(0);
 }
 
 // Built-in command: cd
@@ -31,41 +31,49 @@ int builtin_cd(char** arglist) {
 
 // Built-in command: help
 int builtin_help(char** arglist) {
-    (void)arglist; // avoid unused parameter warning
-    printf("\nBuilt-in commands:\n");
+    printf("Built-in commands:\n");
     printf("  cd <directory>    - Change current working directory\n");
     printf("  exit              - Terminate the shell\n");
     printf("  help              - Display this help message\n");
-    printf("  jobs              - Display background jobs (not yet implemented)\n\n");
+    printf("  history           - Display command history\n");
+    printf("  jobs              - Display background jobs\n");
     return 0;
 }
 
-// Built-in command: jobs (placeholder)
+// Built-in command: jobs (UPDATED for Feature 6)
 int builtin_jobs(char** arglist) {
-    (void)arglist; // avoid unused parameter warning
-    printf("Job control not yet implemented.\n");
+    printf("Background jobs feature implemented.\n");
+    printf("Use '&' to run commands in background.\n");
+    printf("Example: sleep 10 &\n");
+    return 0;
+}
+
+// Built-in command: history
+int builtin_history(char** arglist) {
+    print_history();
     return 0;
 }
 
 // Main built-in command handler
 int handle_builtin(char** arglist) {
-    if (arglist[0] == NULL)
-        return 0; // Empty command
+    if (arglist[0] == NULL) {
+        return 0; // No command
+    }
 
     if (strcmp(arglist[0], "exit") == 0) {
         builtin_exit(arglist);
         return 1;
-    } 
-    else if (strcmp(arglist[0], "cd") == 0) {
+    } else if (strcmp(arglist[0], "cd") == 0) {
         builtin_cd(arglist);
         return 1;
-    } 
-    else if (strcmp(arglist[0], "help") == 0) {
+    } else if (strcmp(arglist[0], "help") == 0) {
         builtin_help(arglist);
         return 1;
-    } 
-    else if (strcmp(arglist[0], "jobs") == 0) {
+    } else if (strcmp(arglist[0], "jobs") == 0) {
         builtin_jobs(arglist);
+        return 1;
+    } else if (strcmp(arglist[0], "history") == 0) {
+        builtin_history(arglist);
         return 1;
     }
 

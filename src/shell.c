@@ -1,39 +1,33 @@
 #include "shell.h"
 
-/* read a line from fp, return malloc'd string (caller frees) */
-char* read_cmd(char* prompt, FILE* fp) {
-    if (prompt) printf("%s", prompt);
-    char *buf = malloc(MAX_LEN);
-    if (!buf) return NULL;
-
-    if (fgets(buf, MAX_LEN, fp) == NULL) {
-        free(buf);
-        return NULL; /* EOF (Ctrl+D) */
-    }
-    /* strip newline */
-    size_t L = strlen(buf);
-    if (L > 0 && buf[L-1] == '\n') buf[L-1] = '\0';
-    return buf;
-}
-
-/* simple whitespace tokenizer, returns malloc'd array (caller frees tokens and array) */
 char** tokenize(char* cmdline) {
-    if (cmdline == NULL) return NULL;
-    /* quick check: empty/only spaces */
-    char *p = cmdline;
-    while (*p == ' ' || *p == '\t') p++;
-    if (*p == '\0') return NULL;
+    if (!cmdline || cmdline[0] == '\0' || cmdline[0] == '\n') return NULL;
 
-    char** args = malloc((MAXARGS+1) * sizeof(char*));
-    if (!args) return NULL;
-    int argc = 0;
-    char *tok = strtok(cmdline, " \t");
-    while (tok != NULL && argc < MAXARGS) {
-        args[argc] = malloc(strlen(tok)+1);
-        strcpy(args[argc], tok);
-        argc++;
-        tok = strtok(NULL, " \t");
+    char** arglist = malloc(sizeof(char*) * (MAXARGS + 1));
+    for (int i = 0; i < MAXARGS + 1; i++) arglist[i] = malloc(sizeof(char) * ARGLEN);
+
+    char* cp = cmdline;
+    char* start;
+    int len;
+    int argnum = 0;
+
+    while (*cp != '\0' && argnum < MAXARGS) {
+        while (*cp == ' ' || *cp == '\t') cp++;
+        if (*cp == '\0') break;
+        start = cp;
+        len = 1;
+        while (*++cp != '\0' && *cp != ' ' && *cp != '\t') len++;
+        strncpy(arglist[argnum], start, len);
+        arglist[argnum][len] = '\0';
+        argnum++;
     }
-    args[argc] = NULL;
-    return args;
+
+    if (argnum == 0) {
+        for (int i = 0; i < MAXARGS + 1; i++) free(arglist[i]);
+        free(arglist);
+        return NULL;
+    }
+
+    arglist[argnum] = NULL;
+    return arglist;
 }

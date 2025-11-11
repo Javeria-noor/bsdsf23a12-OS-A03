@@ -1,12 +1,22 @@
 # Compiler and flags
 CC = gcc
 CFLAGS = -Wall -g -Iinclude
-LDFLAGS = 
+LDFLAGS = -lreadline
+
 TARGET = bin/myshell
 SRCDIR = src
-OBJDIR = obj
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
+
+# Explicitly list source files
+SOURCES = $(SRCDIR)/builtins.c \
+          $(SRCDIR)/execute.c \
+          $(SRCDIR)/history.c \
+          $(SRCDIR)/main.c \
+          $(SRCDIR)/readline_support.c \
+          $(SRCDIR)/shell.c \
+          $(SRCDIR)/parser.c \
+          $(SRCDIR)/redirection.c
+
+OBJECTS = $(SOURCES:.c=.o)
 
 # Default target
 all: $(TARGET)
@@ -17,17 +27,18 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
 
 # Compile source files to object files
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(OBJDIR)
+%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean build artifacts
 clean:
-	rm -rf $(OBJDIR) $(TARGET)
+	rm -f $(OBJECTS) $(TARGET)
+	find src -name "*.o" -delete
+	find . -name "test_*" -delete
 
-# Install dependencies (for later features)
+# Install dependencies
 deps:
 	sudo apt update
-	sudo apt install -y libreadline-dev
+	sudo apt install -y libreadline-dev build-essential
 
 .PHONY: all clean deps
