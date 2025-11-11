@@ -5,6 +5,9 @@ int main() {
     char* expanded_cmd = NULL;
     pipeline_t pipeline;
 
+    // Initialize variables
+    init_variables();
+    
     // Initialize Readline if available
     initialize_readline();
 
@@ -16,7 +19,54 @@ int main() {
             break; // EOF (Ctrl+D)
         }
 
-        // Handle command chaining (;) - NEW FEATURE 6
+        // Feature 8: Check for variable assignment first
+        if (is_variable_assignment(cmdline)) {
+            handle_variable_assignment(cmdline);
+            free(cmdline);
+            continue;
+        }
+
+        // Feature 8: Expand variables in command line
+        char* expanded_with_vars = expand_variables(cmdline);
+        if (expanded_with_vars != NULL) {
+            free(cmdline);
+            cmdline = expanded_with_vars;
+        }
+
+        // Feature 7: Check for if statement
+        if (parse_if_statement(cmdline)) {
+            // Simple if statement handling
+            if (strstr(cmdline, "if") != NULL) {
+                char* if_pos = strstr(cmdline, "if");
+                char* then_pos = strstr(cmdline, "then");
+                char* else_pos = strstr(cmdline, "else");
+                char* fi_pos = strstr(cmdline, "fi");
+                
+                if (if_pos && then_pos && fi_pos) {
+                    // Extract condition command (between if and then)
+                    char condition[256] = {0};
+                    strncpy(condition, if_pos + 3, then_pos - if_pos - 3);
+                    
+                    char then_cmd[256] = {0};
+                    char else_cmd[256] = {0};
+                    
+                    if (else_pos) {
+                        // Has else block
+                        strncpy(then_cmd, then_pos + 4, else_pos - then_pos - 4);
+                        strncpy(else_cmd, else_pos + 4, fi_pos - else_pos - 4);
+                    } else {
+                        // No else block
+                        strncpy(then_cmd, then_pos + 4, fi_pos - then_pos - 4);
+                    }
+                    
+                    execute_if_statement(condition, then_cmd, else_cmd);
+                    free(cmdline);
+                    continue;
+                }
+            }
+        }
+
+        // Handle command chaining (;)
         char* saveptr;
         char* command_token = strtok_r(cmdline, ";", &saveptr);
         
@@ -29,11 +79,11 @@ int main() {
                 if (expanded_cmd != NULL) {
                     free(current_cmd);
                     current_cmd = strdup(expanded_cmd);
-                    printf("%s\n", current_cmd);  // Show the expanded command
+                    printf("%s\n", current_cmd);
                 } else {
                     free(current_cmd);
                     command_token = strtok_r(NULL, ";", &saveptr);
-                    continue;  // Skip to next command if history expansion failed
+                    continue;
                 }
             }
             

@@ -37,10 +37,11 @@ int builtin_help(char** arglist) {
     printf("  help              - Display this help message\n");
     printf("  history           - Display command history\n");
     printf("  jobs              - Display background jobs\n");
+    printf("  set               - Display shell variables\n");
     return 0;
 }
 
-// Built-in command: jobs (UPDATED for Feature 6)
+// Built-in command: jobs
 int builtin_jobs(char** arglist) {
     printf("Background jobs feature implemented.\n");
     printf("Use '&' to run commands in background.\n");
@@ -51,6 +52,12 @@ int builtin_jobs(char** arglist) {
 // Built-in command: history
 int builtin_history(char** arglist) {
     print_history();
+    return 0;
+}
+
+// Feature 8: Built-in command: set
+int builtin_set(char** arglist) {
+    print_variables();
     return 0;
 }
 
@@ -74,6 +81,9 @@ int handle_builtin(char** arglist) {
         return 1;
     } else if (strcmp(arglist[0], "history") == 0) {
         builtin_history(arglist);
+        return 1;
+    } else if (strcmp(arglist[0], "set") == 0) {
+        builtin_set(arglist);
         return 1;
     }
 

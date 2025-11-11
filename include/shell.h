@@ -61,6 +61,7 @@ rl_completion_func_t* rl_attempted_completion_function = NULL;
 #define PROMPT "FCIT> "
 #define HISTORY_SIZE 20
 #define MAX_PIPES 10
+#define MAX_VARS 100
 
 // Structure to hold command information with redirection
 typedef struct {
@@ -75,6 +76,12 @@ typedef struct {
     command_t commands[MAX_PIPES];  // Commands in the pipeline
     int num_commands;               // Number of commands in pipeline
 } pipeline_t;
+
+// Feature 8: Variable structure
+typedef struct {
+    char* name;
+    char* value;
+} variable_t;
 
 // Function prototypes
 char* read_cmd(char* prompt, FILE* fp);
@@ -98,5 +105,16 @@ int parse_redirection_pipes(char* cmdline, pipeline_t* pipeline);
 void free_pipeline(pipeline_t* pipeline);
 int execute_pipeline(pipeline_t* pipeline);
 int execute_with_redirection(command_t* cmd);
+
+// Feature 7: if-then-else-fi function prototypes
+int parse_if_statement(char* cmdline);
+int execute_if_statement(char* condition_cmd, char* then_cmd, char* else_cmd);
+
+// Feature 8: Variable function prototypes
+int is_variable_assignment(char* cmdline);
+void handle_variable_assignment(char* cmdline);
+char* expand_variables(char* cmdline);
+void print_variables();
+void init_variables();
 
 #endif // SHELL_H
