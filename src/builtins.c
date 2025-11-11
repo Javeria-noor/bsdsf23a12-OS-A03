@@ -38,7 +38,8 @@ int builtin_help(char** arglist) {
     printf("  history           - Display command history\n");
     printf("  jobs              - Display background jobs\n");
     printf("  set               - Display shell variables\n");
-    return 0;
+	printf(" set - Display shell variables\n");    
+return 0;
 }
 
 // Built-in command: jobs
